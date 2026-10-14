@@ -1,0 +1,17 @@
+id: tenant_demo
+name: Demo Tenant
+allowed_domains:
+  - ecommerce
+  - saas
+  - banking
+  - healthcare_admin
+  - telecom
+  - travel
+  - insurance
+  - education
+  - hr
+  - logistics
+  - real_estate
+  - government
+retention_days: 365
+overrides: {}

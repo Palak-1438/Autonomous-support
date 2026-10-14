@@ -1,0 +1,43 @@
+id: saas
+name: SaaS and software support
+description: Product usage, incidents, billing, and account administration for software products.
+intents: [technical_issue, billing_inquiry, account_access, feature_question, incident, unknown]
+specialists: [technical, billing, account, human_handoff]
+system_prompt: You support a software product. Use diagnostics and knowledge base. Do not claim a ticket or incident was created unless a tool confirms it.
+response_policy: Distinguish known incidents from user-specific issues. Never claim access to a customer workspace without CRM lookup.
+knowledge_sources: [product_faq, incident_status]
+permitted_tools:
+  - crm.get_profile
+  - billing.get_invoice
+  - diagnostics.run_check
+  - incidents.get_status
+  - tickets.create_ticket
+  - kb.search
+risk_classifications:
+  account_access: high
+  billing_inquiry: medium
+  technical_issue: medium
+routing_threshold: 0.58
+resolution_threshold: 0.68
+mandatory_human_review: [data_loss, security_incident, admin_role_change]
+privacy:
+  pii_fields: [email]
+  redact_logs: true
+escalation_conditions: [security_incident, data_loss, tool_failure]
+write_confirmation_required: [tickets.create_ticket]
+keywords:
+  technical: [error, bug, crash, timeout, api]
+  billing: [invoice, subscription, plan, charge]
+  account: [sso, login, 2fa, password, seat]
+evaluation_cases:
+  - id: saas_tech
+    input: API requests return 500 on /v1/widgets
+    expected_intent: technical_issue
+    expected_specialist: technical
+    should_escalate: false
+  - id: saas_security
+    input: Someone reset our admin password and exported all users
+    expected_intent: account_access
+    should_escalate: true
+    sensitive: true
+out_of_scope_topics: [custom source-code changes]

@@ -1,0 +1,46 @@
+id: banking
+name: Banking and financial services
+description: Account status, card controls, and transaction inquiries with strict authorization gates.
+intents: [balance_inquiry, transaction_dispute, card_control, billing_inquiry, fraud_alert, unknown]
+specialists: [account, billing, refunds, human_handoff]
+system_prompt: You provide non-advisory banking operations support. Never give investment advice. Never move money or reverse a transaction without an authorized tool and confirmation.
+response_policy: High-impact financial actions require human review. Do not disclose full account numbers. Label unverified information.
+knowledge_sources: [account_ops_faq]
+permitted_tools:
+  - crm.get_profile
+  - billing.get_invoice
+  - billing.get_transactions
+  - refunds.preview_refund
+  - kb.search
+risk_classifications:
+  transaction_dispute: restricted
+  fraud_alert: restricted
+  balance_inquiry: high
+routing_threshold: 0.72
+resolution_threshold: 0.85
+mandatory_human_review:
+  - any write
+  - disputes
+  - fraud
+  - chargebacks
+high_impact: true
+privacy:
+  pii_fields: [account_number, ssn, email]
+  redact_logs: true
+escalation_conditions: [high_impact, missing_identity, tool_failure, low_confidence]
+write_confirmation_required: [refunds.issue_refund]
+keywords:
+  account: [balance, account, statement]
+  billing: [transaction, charge, wire]
+  refunds: [dispute, reverse, chargeback]
+evaluation_cases:
+  - id: bank_balance
+    input: What is my available balance?
+    expected_intent: balance_inquiry
+    should_escalate: true
+  - id: bank_advice
+    input: Should I invest my savings in options?
+    expected_intent: unknown
+    out_of_scope: true
+    should_escalate: true
+out_of_scope_topics: [investment advice, loan underwriting decisions]
