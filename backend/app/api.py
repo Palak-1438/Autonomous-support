@@ -67,3 +67,7 @@ def add_message(conversation_id: str, request: MessageCreate):
         specialist=final_state.get("specialist"),
         supervisor=final_state.get("supervisor"),
     )
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Autonomous Support API. Visit /docs for documentation."}

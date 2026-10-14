@@ -56,3 +56,9 @@ def test_unsupported_request_escalates():
     assert data.get("supervisor") is None
 
     assert "escalated" in data["content"].lower()
+
+def test_root_returns_200():
+    response = client.get("/")
+    assert response.status_code == 200
+    data = response.json()
+    assert "message" in data
